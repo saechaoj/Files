@@ -142,6 +142,7 @@ void smallestF()
     typeFile = buffer.st_mode;
     if(typeFile == 33200)
     {
+		
       if(strncmp(PREFIX, aDir->d_name, strlen(PREFIX)) == 0)
       {
 
@@ -173,6 +174,9 @@ void smallestF()
   // Close the directory
   closedir(currDir);
   printf("Now processing smallest file %s\n",entryName);
+    processFile(entryName);
+
+ 
 
 
 
@@ -194,7 +198,7 @@ void largestF()
   off_t file_size2;
   mode_t typeFile;
   char entryName[256];
-  int i = 0;
+  int j= 0;
 
  
   while((aDir = readdir(currDir)) != NULL){
@@ -205,14 +209,14 @@ void largestF()
     {
       if(strncmp(PREFIX, aDir->d_name, strlen(PREFIX))== 0)
       {
-		printf("%s\n", aDir->d_name);
+		
 
           //base case to test size of file
-          if(i == 0)
+          if(j == 0)
           {
             stat(aDir->d_name, &buffer);
             file_size = buffer.st_size;
-            i++;
+           j++;
           }
 
             stat(aDir->d_name, &buffer);
@@ -234,7 +238,7 @@ void largestF()
   // Close the directory
   closedir(currDir);
   printf("Now processing largest file %s\n",entryName);
- //` processFile(entryName);
+  processFile(entryName);
 
 
 
