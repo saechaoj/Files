@@ -10,15 +10,29 @@
 
 #define PREFIX "movies_"
 
+const char needle[4] = "csv";
 
 struct movie{
   char* title;
   int  year;
 };
 
-
-void processFile(char chosenFile)
+char* createDir()
 {
+  int file_descriptor;
+  char newFilePath[50];
+  sprintf(newFilePath,"saechaoj.movies.%d",rand() % 99999);
+  mkdir(newFilePath, 0740);
+  printf("New directory %s created.\n", newFilePath);
+ return newFilePath;
+}
+
+
+
+void processFile(char *chosenFile)
+{
+
+  char* newDir = createDir();
   DIR* currDir = opendir(".");
   FILE *movieFile = fopen(chosenFile, "r");
   if(!movieFile)
@@ -34,50 +48,21 @@ void processFile(char chosenFile)
   int i = 0;
   int j = 1;
 
-  while(nread = getline(&currLine,&len,chosenFile))
-  {
+ // while(nread = getline(&currLine,&len,chosenFile))
+ // {
 
-  char *token = strtok_r(currLine, ",", &saveptr);
+  //char *token = strtok_r(currLine, ",", &saveptr);
 
-  currMovie[i][0] = calloc(strlen(token) + 1, sizeof(char));
-  strcpy(currMovie[i][0], token);
-
-
-  token = strtok_r(NULL, ",",&saveptr);
-  currMovie[i][1] = atoi(token);
-
-  }
-  printf("here");
-  printf("%s %s" ,currMovie[0][1], currMovie[0][0] );
-
-}
+  //currMovie[i][0] = calloc(strlen(token) + 1, sizeof(char));
+  //strcpy(currMovie[i][0], token);
 
 
-void createDir()
-{
-  int file_descriptor;
-  char newFilePath[50];
-  sprintf(newFilePath,"saechaoj.movies.%d",rand() % 99999);
-  mkdir(newFilePath, 0750);
-  DIR* currDir = opendir(newFilePath);
-  struct dirent *aDir;
-  struct stat buffer;
+  //token = strtok_r(NULL, ",",&saveptr);
+ // currMovie[i][1] = atoi(token);
 
-  // file_descriptor = open(newFilePath, O_CREAT, 0750);
-  // if (file_descriptor == -1){
-	// 	printf("Creating directory failed on \"%s\"\n", newFilePath);
-	// 	perror("Error");
-	// 	exit(1);
-
-
-
-
-  closedir(currDir);
-
-//******** change for archetecture
-
-
-
+  //}
+ // printf("here");
+ // printf("%s %s" ,currMovie[0][1], currMovie[0][0] );
 
 }
 
@@ -100,9 +85,41 @@ void userF()
 
   	}
 
-  	printf("file_descriptor = %d\n", file_descriptor);
+	else
+	{
+	printf("Now processing %s\n", userInp);
+	processFile(userInp);
+	}
 
 }
+
+
+//creates new file
+void createFile(char* newDirectory, int year)
+{
+
+  int file_d;
+  struct stat buffer;
+  struct dirent *bDir;
+  char* newFP = "./something.txt";
+  DIR* currDir = opendir(newDirectory);
+  if(!currDir)
+         {
+            perror("Problem");
+          }
+
+  file_d = open(newFP, O_RDWR | O_CREAT , 0600);
+  if (file_d == -1)                         
+  {
+ 	 printf("open() failed on \"%s\"\n", newFP);
+         perror("Error");
+                                     
+    }
+
+
+     closedir(currDir);
+                                         }
+                                          
 
 // Finds smallest file
 void smallestF()
@@ -123,7 +140,7 @@ void smallestF()
 //*******    //checks for the file type
     stat(aDir->d_name, &buffer);
     typeFile = buffer.st_mode;
-    if(typeFile == 33188)
+    if(typeFile == 33200)
     {
       if(strncmp(PREFIX, aDir->d_name, strlen(PREFIX)) == 0)
       {
@@ -145,9 +162,6 @@ void smallestF()
           if(file_size > file_size2)
           {
             file_size = file_size2;
-            printf("Name : %s Size is %lld\n",aDir->d_name,file_size);
-
-//******
             memset(entryName,',',sizeof(entryName));
             strcpy(entryName,aDir->d_name);
 
@@ -182,19 +196,18 @@ void largestF()
   char entryName[256];
   int i = 0;
 
-  // Go through all the entries
+ 
   while((aDir = readdir(currDir)) != NULL){
 
-//*******    //checks for the file type
     stat(aDir->d_name, &buffer);
     typeFile = buffer.st_mode;
-    if(typeFile == 33188)
+    if(typeFile ==33200 )
     {
-      if(strncmp(PREFIX, aDir->d_name, strlen(PREFIX)) == 0)
+      if(strncmp(PREFIX, aDir->d_name, strlen(PREFIX))== 0)
       {
+		printf("%s\n", aDir->d_name);
 
           //base case to test size of file
-
           if(i == 0)
           {
             stat(aDir->d_name, &buffer);
@@ -210,10 +223,7 @@ void largestF()
           if(file_size < file_size2)
           {
             file_size = file_size2;
-            // printf("Name : %s Size is %lld\n",aDir->d_name,file_size);
-
-//******
-            memset(entryName,',',sizeof(entryName));
+            memset(entryName,'.',sizeof(entryName));
             strcpy(entryName,aDir->d_name);
 
           }
@@ -224,7 +234,7 @@ void largestF()
   // Close the directory
   closedir(currDir);
   printf("Now processing largest file %s\n",entryName);
-  processFile(entryName);
+ //` processFile(entryName);
 
 
 
